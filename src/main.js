@@ -103,60 +103,10 @@ function ensureEmptyHidden() {
 function appendMessage(text, who='bot') {
   const m = document.createElement('div')
   m.className = 'message ' + (who === 'user' ? 'user' : 'bot')
-  if (isCodeBlock(text)) {
-    const blocks = parseCodeBlocks(text)
-    blocks.forEach(b => {
-      if (b.type === 'text') {
-        const p = document.createElement('div')
-        p.textContent = b.content
-        m.appendChild(p)
-      } else {
-        const pre = document.createElement('pre')
-        pre.className = 'code'
-        pre.textContent = b.content.trim()
-        m.appendChild(pre)
-      }
-    })
-  } else {
-    m.textContent = text
-  }
+m.textContent = text
   chatEl.appendChild(m)
   chatEl.scrollTop = chatEl.scrollHeight
   ensureEmptyHidden()
-}
-
-function isCodeBlock(s) {
-  return /```/.test(s) || /\bfunction\b|\bdef\b|console\.log/.test(s)
-}
-
-function parseCodeBlocks(s) {
-  const parts = []
-  if (!/```/.test(s)) return [{type:'text',content:s}]
-  let rest = s
-  while (rest.length) {
-    const start = rest.indexOf('```')
-    if (start === -1) {
-      parts.push({type:'text',content:rest})
-      break
-    }
-    if (start > 0) parts.push({type:'text',content:rest.slice(0,start)})
-    rest = rest.slice(start + 3)
-    const langEnd = rest.indexOf('\n')
-    let info = ''
-    if (langEnd !== -1 && langEnd < 30) {
-      info = rest.slice(0, langEnd)
-      rest = rest.slice(langEnd + 1)
-    }
-    const end = rest.indexOf('```')
-    if (end === -1) {
-      parts.push({type:'code',content:rest})
-      break
-    }
-    const code = rest.slice(0, end)
-    parts.push({type:'code',content:code})
-    rest = rest.slice(end + 3)
-  }
-  return parts
 }
 
 function downloadTranscript() {
